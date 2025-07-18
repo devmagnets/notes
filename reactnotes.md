@@ -1,3 +1,22 @@
+# Tag writing not coding but remeber this point
+- if we dont pass something same as img tag where we cant write anything
+```
+ <img src="" alt="" />
+```
+``` 
+    <Route path='/' element={<Home />} />
+```
+- if we pass something same as div tag wehere we write someting
+ ```
+ <h1></h1>
+ ```
+```
+    <Route path='/admin' element={<Admin />} >
+        <Route path='dashboard' element={<Dashboard />} />
+    </Route>
+    
+   
+```
 # MAP
 >use this
 ```
@@ -15,11 +34,169 @@
 }
 ```
 
-# Responsive Navbar
-- render at mobile screen first and hide it on md on mobile screen maintain usestate to open menubar and close menu bar 
-- again render at md for desktop and hide it at mobile
-> we are using navlink from react-router-dom it help to navigate to different page and provide active class to tell user on which page they are by styling isactive is a boolean 
+# Nested Routing using browserrouter
+> here inside admin page we inside route put other routes without / 
+- localhost:2030/admin/manage-blog  we dont add admin/ but it is added automatically we just use manage-blog inside route of admin    without closing it 
+- we use navlink to match the url navigation component made by user
+- we use <Outlet/> to display the result in user component 
+```
+    <BrowserRouter>
+      <Routes>
+          <Route path='/admin' element={<Admin />} >
+              <Route path='dashboard' element={<Dashboard />} />
+              <Route path='manage-blog' element={<ManageBlog />} />
+              <Route path='manage-gallery' element={<ManageGallery />} />
+              <Route path='manage-project' element={<ManageProject />} />
+              <Route path='setting' element={<Setting />} />
+          </Route>
+      </Routes>
+    </BrowserRouter>
+```
 
+# Example - Nested Routing
+```
+import { useState } from "react"
+import { MdOutlineClose, MdOutlineMenu } from "react-icons/md";
+import { BrowserRouter, NavLink, Outlet } from "react-router-dom";
+export default function Admin() {
+
+    const [isMenubar, setMenubar] = useState(true)
+
+    const adminMenu = [
+        { title: 'Dashboard', link: 'dashboard' },
+        { title: 'Manage Gallery', link: 'manage-gallery' },
+        { title: 'Manage Project', link: 'manage-project' },
+        { title: 'Manage Blog', link: 'manage-blog' },
+        { title: 'setting', link: 'setting' },
+
+
+    ]
+    return (<>
+        <section className="w-full  h-[100vh] border-2 border-red-400">
+            <div onClick={() => setMenubar(!isMenubar)} className="relative top-0 flex items-center bg-primary  h-[40px] px-10 ">{<MdOutlineMenu className="text-text-primary text-3xl " />}</div>
+            <div className="relative flex w-full h-full">
+                {/* admin navabar */}
+                {
+                    isMenubar && (
+                        <div className=" absolute md:static bg-primary text-text-primary  w-40 h-full flex flex-col justify-evenly items-center">
+                            <h1 className="text-xl font-semibold tracking-[1px]">Admin Panel</h1>
+                            <ul className=" text-center capitalize  h-[80%]  flex flex-col justify-evenly">
+                                {
+                                    adminMenu.map((item, index) => (
+                                        <li key={index} ><NavLink to={item.link} >{item.title}</NavLink></li>
+                                    ))
+                                }
+                            </ul>
+                        </div>
+                    )
+                }
+                {/* admin pages */}
+                <div className="border-2  border-black h-full grow  bg-[pink] p-10  ">
+                    <div className="border-2 h-full rounded-xl overflow-hidden ">
+                        <div className="bg-primary h-12 w-full "></div>
+                        <div className="bg-yellow-300 h-full">
+                            {/* link to pe open here path is given above */}
+                            <Outlet />                                            {/*we display the link here in outlet tag*/}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </>)
+}
+``` 
+# Public And Private Layout For Client And Admin
+- make public layout with navbar and footer because qwe want to dispaly it in every page
+- make private layout so that public and private route wont have navbar and footer 
+- using nested routing we give path with / inside route where public or private layout is rendered as element look below 
+```
+import Navbar from './components/Navbar.jsx'
+import Footer from './components/Footer.jsx'
+import Home from './pages/Home.jsx'
+import Blog from './pages/Blog.jsx'
+import Gallery from './pages/Gallery.jsx'
+import Process from './pages/Process.jsx'
+import Project from './pages/Project.jsx'
+import Admin from './admin/Admin.jsx'
+
+import Dashboard from './admin/Dashboard.jsx'
+import ManageBlog from './admin/ManageBlog.jsx'
+import ManageGallery from './admin/ManageGallery.jsx'
+import ManageProject from './admin/ManageProject.jsx'
+import Setting from './admin/Setting.jsx'
+
+import { BrowserRouter, Route, Routes,Outlet } from 'react-router-dom'
+
+function PublicLayout() {
+  return (<>
+    <Navbar />
+    <Outlet />
+    <Footer />
+  </>)
+
+}
+function AdminLayout() {
+  return (<>
+    <Admin />
+  </>)
+
+}
+export default function App() {
+
+  return (<>
+    <BrowserRouter>
+
+      <Routes>
+        <Route path='/admin' element={<AdminLayout />} >
+          <Route path='' element={<Dashboard />} />
+          <Route path='manage-blog' element={<ManageBlog />} />
+          <Route path='manage-gallery' element={<ManageGallery />} />
+          <Route path='manage-project' element={<ManageProject />} />
+          <Route path='setting' element={<Setting />} />
+        </Route>
+
+        <Route path='/' element={<PublicLayout />}>
+          <Route path='' element={<Home />} />
+          <Route path='process' element={<Process />} />
+          <Route path='projects' element={<Project />} />
+          <Route path='blogs' element={<Blog />} />
+          <Route path='gallery' element={<Gallery />} />
+        </Route>
+      </Routes>
+
+    </BrowserRouter>
+  </>)
+}
+```
+
+
+# Navlink and isActive variable and end variable
+- {isactive} is a boolean 
+- /admin and /admin/123 is same i.e true for is active without end it consider subroute too
+- /admin and /admin/123 is different i.e false if end is used with isactive 
+
+```
+✅ Without end
+
+<NavLink to="/about">About</NavLink>
+Active on: /about, /about/team, /about/anything
+
+✅ Matches if the current URL starts with /about
+
+✅ With end
+
+<NavLink to="/about" end>About</NavLink>
+Active only on: /about
+
+❌ Not active on: /about/team
+
+✅ Matches only if URL is exactly /about
+```
+
+```
+<NavLink to={item.link} end className={ (({isActive})=>isActive?'bg-yellow-800 p-2 rounded-xl':'')} >{item.title}</NavLink>
+```
 ```
 <NavLink
         className={item.title != 'Home' && (({ isActive }) => isActive ? "border-b-2 border-text-primary text-yellow-100" : "hover:text-yellow-100")}
@@ -29,14 +206,25 @@
 </NavLink>
 ```
 
+# Routing using browserrouter
 > browser route is used to use navlink and route to different page on client withour refreshing the page
+- we use navlink to match the url in navigation component made by user
 ```
- <BrowserRouter>
-    <Routes>
-      <Route path='/' element={<Home />} />
-    </Routes>
-  </BrowserRouter>
+    <BrowserRouter>
+      <Routes>  
+          <Route path='/' element={<Home />} />
+          <Route path='/process' element={<Process />} />
+          <Route path='/projects' element={<Project />} />
+          <Route path='/blogs' element={<Blog />} />
+          <Route path='/gallery' element={<Gallery />} />
+      </Routes>
+    </BrowserRouter>
 ```
+
+# Responsive Navbar
+- render at mobile screen first and hide it on md on mobile screen maintain usestate to open menubar and close menu bar 
+- again render at md for desktop and hide it at mobile
+> we are using navlink from react-router-dom it help to navigate to different page and provide active class to tell user on which page they are by styling {isactive} in braces we put else everyone get active and get color 
 
 ## Example-Responsive Navbar With Routing Code Logic Complete
 ```
