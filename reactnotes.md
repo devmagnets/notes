@@ -1,3 +1,29 @@
+# What is a REST API?
+REST = REpresentational State Transfer
+
+A RESTful API is an architecture style where we use HTTP methods (like GET, POST, PUT, DELETE) to interact with data stored on the server — like creating, reading, updating, or deleting ("CRUD") resources.
+```
+fetch('link') //get
+router.get('link',(req,res)=>{
+
+})
+
+
+fetch(`link${variable}`,{method:'DELETE'}) //delete 
+router.delete('link:variable',(req,res)=>{
+    const variable=req.params.variable
+})
+
+
+
+fetch('link',{ //post
+    method:'POST',
+    headers:{
+        'Content-Type':'application/json'
+    },
+    body:JSON.stringify({key:value}) //passing object
+})
+```
 # Tag writing not coding but remeber this point
 - if we dont pass something same as img tag where we cant write anything
 ```
@@ -665,4 +691,261 @@ const mongoose = require('mongoose')
         console.error(`err: ${err}`)
     })
 
+```
+# useNavigate and useLocation
+- ✅ useNavigate
+Purpose:
+Used to navigate to a different route programmatically, usually after a user action like button click or form submission.
+- ✅ useLocation
+Purpose:
+Used to get information about the current route, such as the pathname, query parameters, hash, and custom state passed during navigation.
+```
+✅ useNavigate
+
+
+Import:
+import { useNavigate } from 'react-router-dom'
+
+How it works:
+
+You call useNavigate() to get the navigate function.
+
+Then you call navigate('/path') to go to a new route.
+
+Example:
+
+
+const navigate = useNavigate();
+navigate('/dashboard'); // goes to /dashboard
+You can also go back:
+
+
+navigate(-1); // same as browser back
+Use cases:
+
+Button clicks
+
+Form submissions
+
+Redirects after login or logout
+```
+```
+
+✅ useLocation
+
+
+Import:
+import { useLocation } from 'react-router-dom'
+
+How it works:
+
+You call useLocation() to get a location object.
+
+You can access pathname,state(can be object string number json array etc) etc.
+
+Example:
+
+
+const location = useLocation();
+console.log(location.pathname); // e.g., '/admin'
+Use cases:
+
+Show active links
+
+Conditionally render content based on route
+
+Read state passed via navigate('/path', { state: {...} })
+```
+
+# Form Handling using disk and cloudinary (FHDC)
+- const multer=require('multer)
+- const cloudinary = require('cloudinary').v2; 
+###  (FHDC) form 
+ - multiple keyword allow multiple file to send at once
+ - encType="multipart/form-data"> it is must for multer so that multer can parse it express.json can oarse text only
+```
+<input type="file" multiple onChange={change} />
+```
+
+```
+    <form action="http://localhost:2030/sendPic"
+      method="POST"
+      encType="multipart/form-data">
+      <input type="file" multiple  />
+      <button type="submit">Upload</button>
+    </form>
+```
+### (FHDC) file contatin 
+ ```
+  //   console.log(file)
+        //   fieldname: 'images', namefiled of input tag
+        //   originalname: 'heroImg.jpg',
+        //   encoding: '7bit',
+        //   mimetype: 'image/jpeg'
+
+```
+###  (FHDC) Error Handling
+```
+// error handling of multer
+app.use((err, req, res, next) => {
+    if (err) {
+        return res.json({ error: err.message });
+    }
+    next();
+});
+```
+
+###  (FHDC) filter image ,document or archieves using this only
+-     req.file.mimetype.startWith('application/') for pdf,msword,pdf,ppt  
+-     req.file.mimetype.startWith('video/') for video
+-     req.file.mimetype.startWith('image/') for image
+```
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = [
+    // Images
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'image/gif',
+    req.file.mimetype.startWith('image/')
+
+    // Video
+    video/mp4
+    video/webm
+    video/ogg
+    video/quicktime
+    video/x-msvideo
+    video/x-matroska
+     req.file.mimetype.startWith('video/')
+
+    // Documents
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      // Archives
+    'application/zip',
+    'application/vnd.rar'
+     req.file.mimetype.startWith('application/')
+    
+    'text/plain',
+
+  
+  ];
+
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only standard image, document, or archive files are allowed!'), false);
+  }
+};
+
+```
+
+###  (FHDC)way-1  storing in disc
+- to store in ram use memorystorage
+- to store in server folder usinf disk stroage 
+- use req,file,cb
+- const upload = multer({ storage, fileFilter }); // we use filter wiith storage
+- upload.array('images', 10)passed as middleware where 10 is max file
+- diskstorage take destination and filename 
+```
+
+// storing in server
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads'); // 👈 folder where file is saved (create manually or ensure it exists)
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + file.originalname +path.extname(file.originalname)); // unique file name
+    }
+});
+
+const upload = multer({ storage, fileFilter }); // we use filter wiith storage
+```
+### (FHDC)passing file in routes 
+- req.files
+- req.files.length
+```
+app.post('/sendPic', upload.array('images', 10), (req, res) => {  // here images is namefiled of input tag must be same
+    if (!req.files || req.files.length === 0) {
+        return res.json({ error: 'No files selected!' });
+    }
+
+    const filePaths = req.files.map((file) => file.path);
+    res.json({ message: 'Files uploaded', files: filePaths });
+});
+
+```
+### (FHDC)way-2 storing file in cloudinary using cloudinary 
+> storage(memoryStroage) -> upload -> upload.array (middleware in route) -> uploadtocloudinary(function created by user and return promise with public_id and secure_url with     cloudinary.uploader.upload_stream({ resource_type: 'image' }, (err, result)))
+- resource_type: 'image'
+- resource_type: 'video' and 'audio'
+- resource_type: 'raw' for pdf msword ppt excell etc
+- resolve({url: result.secure_url, id: result.public_id }); url for view image and if for delete
+- cloudinary.uploader.upload_stream it is used to send image from memory directly just choose from computer and upload 
+- file.buffer contain the in-memory image video etc
+- function uploadToCloudinary(buffer) return promise
+- end(buffer) will tell cloudinary server that file is send now you can upload else cloudinary wait for when image will be sent to their server and when cloudinary will host the image 
+```
+// ✅ Cloudinary config
+cloudinary.config({
+  cloud_name: '',
+  api_key: '',
+  api_secret: ''
+});
+
+// ✅ Multer memory storage for file buffers
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+// ✅ Cloudinary upload function (single buffer)
+function uploadToCloudinary(buffer) {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload_stream({ resource_type: 'image' }, (err, result) => {
+      if (err) return reject(err);
+      resolve({
+        url: result.secure_url, 
+        id: result.public_id
+      });
+    }).end(buffer);
+  });
+}
+
+// ✅ Route for multiple image upload
+app.post('/sendPic', upload.array('images', 10), async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: 'No files uploaded' });
+    }
+
+    const uploadedImages = [];
+
+    for (const file of req.files) {
+      const result = await uploadToCloudinary(file.buffer);
+      uploadedImages.push(result);
+    }
+
+    res.json({ message: 'All images uploaded to Cloudinary', images: uploadedImages });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+```
+### (FHDC)Deleting file from cloudinary
+- public id is unique id used to delete fiel rrom cloudinary
+```
+ cloudinary.uploader.destroy(PUBLIC_ID,{ resource_type: 'video' }, (error, result) => {
+        if (error) {
+            // Handle error (not found, credentials, etc.)
+            console.error('Delete failed', error);
+        } else {
+            console.log('Delete result:', result);
+        }
+    });
 ```
