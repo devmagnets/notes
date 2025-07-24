@@ -1,22 +1,98 @@
+# File Handling
+✅ Why async methods use (err) and sync methods don't:
+Error Handling:
+ASYNC:	Via (err) argument in callback
+SYNC:	Via try...catch or throws error
+
+```
+const fs = require('fs');
+const path = require('path');
+
+const filePath = 'sample.txt';
+
+// ✅ WRITE
+// Async
+fs.writeFile(filePath, 'This is initial content.\n', (err) => {
+  if (err) throw err;
+  console.log('✅ File written (async)');
+});
+
+// Sync
+fs.writeFileSync(filePath, 'This is initial content.\n');
+console.log('✅ File written (sync)');
+
+// ✅ APPEND
+// Async
+fs.appendFile(filePath, 'Appended content (async).\n', (err) => {
+  if (err) throw err;
+  console.log('✅ File appended (async)');
+});
+
+// Sync
+fs.appendFileSync(filePath, 'Appended content (sync).\n');
+console.log('✅ File appended (sync)');
+
+// ✅ READ
+// Async
+fs.readFile(filePath, 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log('📖 File content (async):\n' + data);
+});
+
+// Sync
+const data = fs.readFileSync(filePath, 'utf8');
+console.log('📖 File content (sync):\n' + data);
+
+// ✅ DELETE / UNLINK
+// Async
+fs.unlink(filePath, (err) => {
+  if (err) throw err;
+  console.log('❌ File deleted (async)');
+});
+
+// Sync
+fs.writeFileSync(filePath, 'Temporary content to delete.');
+fs.unlinkSync(filePath);
+console.log('❌ File deleted (sync)');
+
+```
 # What is a REST API?
 REST = REpresentational State Transfer
 
 A RESTful API is an architecture style where we use HTTP methods (like GET, POST, PUT, DELETE) to interact with data stored on the server — like creating, reading, updating, or deleting ("CRUD") resources.
 ```
-fetch('link') //get
+//get to fetch data
+fetch('link') 
 router.get('link',(req,res)=>{
 
 })
 
+//delete to delete data and make sure dont pass body like post request because some sewrver ignore it and use unique variable to delete item 
 
-fetch(`link${variable}`,{method:'DELETE'}) //delete 
+fetch(`link${variable}`,{method:'DELETE'}) 
 router.delete('link:variable',(req,res)=>{
     const variable=req.params.variable
 })
 
+//patch to update specific data field use unique variable to find and use body to update data
+
+```
+fetch(`link${variable}`,{
+    method:'PATCH',
+    headers:{
+        'Content-Type':'application/json'
+    },
+    body:JSON.stringify({key:value}) //passing object
+})
+
+router.patch('link:variable',(req,res)=>{
+    const variable=req.params.variable
+})
+```
 
 
-fetch('link',{ //post
+//post to create data
+fetch('link',{ 
     method:'POST',
     headers:{
         'Content-Type':'application/json'
@@ -880,6 +956,14 @@ app.post('/sendPic', upload.array('images', 10), (req, res) => {  // here images
 });
 
 ```
+### (FHDC)deleting file from filder use fs module 
+``` 
+fs.unlink(filePath, (err) => {
+  if (err) throw err;
+  console.log('❌ File deleted (async)');
+});
+```
+
 ### (FHDC)way-2 storing file in cloudinary using cloudinary 
 > storage(memoryStroage) -> upload -> upload.array (middleware in route) -> uploadtocloudinary(function created by user and return promise with public_id and secure_url with     cloudinary.uploader.upload_stream({ resource_type: 'image' }, (err, result)))
 - resource_type: 'image'
