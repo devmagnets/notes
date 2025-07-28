@@ -1037,6 +1037,7 @@ app.post('/sendPic', upload.array('images', 10), async (req, res) => {
     });
 ```
 # authentication using passport
+> login passport.authenticate -> passport session -> localstragtey serialize -> deserialize then in ejs succesredirecta or failure reidriect while in react react.logIn 
 ```
 import { useState } from "react"
 export default function App() {
@@ -1179,5 +1180,69 @@ app.post('/login', passport.authenticate('local', {
 app.listen(2030, () => {
     console.log(`🚀 Server running at http://localhost:2030`);
 });
+
+```
+# protected route
+- we make isloginvariable send to login and when isloggin get set by login code then only admin page can be accessed
+```
+export default function App() {
+ const [isLoggedIn, setIsLoggedIn] = useState(false); // ⬅️ Login state
+
+  return (<>
+    <BrowserRouter>
+
+      <Routes>
+
+        <Route path='/login' element={<Login setIsLoggedIn={setIsLoggedIn}/>} />
+
+
+        <Route path='/admin' element={isLoggedIn ? <AdminLayout /> : <Login setIsLoggedIn={setIsLoggedIn} />} >
+          <Route path='' element={<ManageGallery />} />
+          <Route path='manage-project' element={<ManageProject />} />
+        </Route>
+
+    
+        
+      </Routes>
+
+    </BrowserRouter>
+  </>)
+}
+```
+```
+export default function Login({ setIsLoggedIn }) {
+    const [form, setForm] = useState({ un: '', pd: '' })
+    const navigate = useNavigate()
+    const change = (e) => {
+        const { name, value } = e.target
+        setForm((prev) => ({ ...prev, [name]: value }))
+    }
+    const submit = async (e) => {
+        e.preventDefault()
+        try {
+            const res = await fetch('http://localhost:2030/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(form),
+                credentials: 'include'  // it is must to store session in cookies
+            })
+            if (res.ok) {
+                const login = await res.json()
+                console.log(login)
+                if (login.login === true) {
+                    setIsLoggedIn(true)
+                    navigate('/admin')
+                }
+                else {
+                    setIsLoggedIn(false)
+                    navigate('/login')
+                }
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
 ```
