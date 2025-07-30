@@ -378,7 +378,7 @@ export default function Navbar() {
     return (<>
         <nav className=" px-10 flex sticky top-0 w-full z-10 bg-primary text-text-primary  justify-between h-12 items-center text-base">
             {/* text color  and bg and px-10 */}
-            <h1>Dilip Construction</h1>
+            <h1>Abhishek Construction</h1>
             <ul className="hidden md:flex gap-4 ">
                 {navData.map((item, index) => (
 
@@ -1244,5 +1244,16 @@ export default function Login({ setIsLoggedIn }) {
             console.log(err)
         }
     }
+
+```
+# use vercel.json
+> in root diretory so that if x.com/home will find then it will consider home and not find home.html as real file because in vercel only index.html is real file
+```
+vercel.json
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ]
+}
 
 ```
