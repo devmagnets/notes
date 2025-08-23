@@ -238,6 +238,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
 
+<!-- in this example i dont use path for publicroute so this work as wrapper and only oultlet will be render defined in publicroute but if i use path too then public route render first then inside it wherever outlet is present will get render with relative path means without / like authneticate instead of /authenticate look below client adn admin example  -->
         <Route element={<PublicRoute />}>
           <Route path='/authenticate' element={<Authenticate />} />
         </Route>
