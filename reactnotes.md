@@ -1,3 +1,4 @@
+
 # File Handling
 ✅ Why async methods use (err) and sync methods don't:
 Error Handling:
@@ -208,6 +209,59 @@ export default function Admin() {
     </>)
 }
 ``` 
+# protected and private route
+-create route
+```
+import { Navigate, Outlet } from "react-router-dom"
+const isAuthenticated = false
+function ProtectedRoute() {
+    return isAuthenticated ? <Outlet /> : <Navigate to='/authenticate' />
+}
+function PublicRoute() {
+    return isAuthenticated ? <Navigate to='/' /> : <Outlet />
+}
+export {ProtectedRoute, PublicRoute} 
+```
+-use in app.jsx
+```
+import Authenticate from "./pages/Authenticate"
+import Menu from './pages/Menu';
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import DashboardComponent from "./pages/DashboardComponent";
+import Setting from './pages/Setting'
+import { ProtectedRoute, PublicRoute } from "./pages/Layout/ProtectedRoute";
+export default function App() {
+
+
+
+  return (<>
+    <BrowserRouter>
+      <Routes>
+
+        <Route element={<PublicRoute />}>
+          <Route path='/authenticate' element={<Authenticate />} />
+        </Route>
+
+        <Route element={<ProtectedRoute />}>
+          <Route path='/' element={<Menu />}>
+            <Route path='' element={<DashboardComponent />} />
+            <Route path='setting' element={<Setting />} />
+          </Route>
+        </Route>
+
+
+
+
+      </Routes>
+
+    </BrowserRouter>
+
+
+  </>)
+}
+
+
+```
 # Public And Private Layout For Client And Admin
 - make public layout with navbar and footer because qwe want to dispaly it in every page
 - make private layout so that public and private route wont have navbar and footer 
@@ -450,9 +504,21 @@ export default function Navbar() {
 ```
 # Cors
 > allow to send frontend data to backend and get data from backend to frontend
+- all origin
 ```
 const cors=require('cors')
 app.use(cors()) {/*it is cors() not cors*/}
+```
+-specific origin when cookies is used
+```
+const cors = require('cors')
+
+const allowedOrigins = ['https://your-frontend.vercel.app']
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}))
 ```
 # Data Parsing
 
