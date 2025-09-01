@@ -146,8 +146,9 @@ fetch('link',{
     <BrowserRouter>
       <Routes>
           <Route path='/admin' element={<Admin />} >
-              <Route path='dashboard' element={<Dashboard />} />
-              <Route path='manage-blog' element={<ManageBlog />} />
+
+              <Route index element={<Dashboard />} /> //either use index or path depend on you 
+              <Route path='manage-blog' element={<ManageBlog />} /> //since there is path without / therfore in navlink to there should be no / look down 
               <Route path='manage-gallery' element={<ManageGallery />} />
               <Route path='manage-project' element={<ManageProject />} />
               <Route path='setting' element={<Setting />} />
@@ -361,6 +362,26 @@ Active only on: /about
         >
         About us
 </NavLink>
+```
+```
+export default function Navbar() {
+    const isActive = ({ isActive }) => {
+        'border-2'
+      return  isActive ? 'text-red-500' : ''
+    }
+    return (<>
+        <nav className=" h-[60px] bg-gray-700 text-white flex items-center justify-around ">
+            <span>DevMagnets</span>
+            <ul className="flex flex-row gap-5 ">
+                <NavLink to='' className={isActive} >Home</NavLink>
+                <NavLink to='about' className={isActive} >About</NavLink>
+                <NavLink to='contact' className={isActive} >Contact</NavLink>
+                <NavLink to='service' className={isActive} >Service</NavLink>
+            </ul>
+        </nav>
+    </>)
+
+}
 ```
 
 # Routing using browserrouter
