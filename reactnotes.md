@@ -1,4 +1,36 @@
+ # For touch events  onTouchStart(where finger is placed)  onTouchMove(after touching moving finger) onTouchEnd(where finger leave touch screen)
+ - e.touches[0].clientX it tell on x axis where is your first finger [0] 
+   ```
+    const [touchStartX, setTouchStartX] = useState(0);
+    const [touchEndX, setTouchEndX] = useState(0);
 
+    const handleTouchStart = (e) => {
+        setTouchStartX(e.touches[0].clientX);
+        setIsPaused(true);
+    };
+
+    const handleTouchMove = (e) => {
+        setTouchEndX(e.touches[0].clientX);
+        setIsPaused(false);
+    };
+
+
+    const handleTouchEnd = () => {
+        const distance = touchStartX - touchEndX;
+        const threshold = 50; // minimum swipe distance
+
+        if (distance > threshold) {
+            // swiped left → next slide
+            rightSlide();
+        } else if (distance < -threshold) {
+            // swiped right → previous slide
+            leftSlide();
+        }
+    };
+```
+```
+<div className=" flex items-center gap-[15px]  h-[300px] w-full justify-center " onTouchMove={handleTouchMove} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}></div>
+```
 # File Handling
 ✅ Why async methods use (err) and sync methods don't:
 Error Handling:
