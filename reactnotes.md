@@ -30,7 +30,9 @@
 ```
 ```
 <div className=" flex items-center gap-[15px]  h-[300px] w-full justify-center " onTouchMove={handleTouchMove} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}></div>
+
 ```
+
 # File Handling
 ✅ Why async methods use (err) and sync methods don't:
 Error Handling:
