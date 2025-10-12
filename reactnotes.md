@@ -1,6 +1,6 @@
  # For touch events  onTouchStart(where finger is placed)  onTouchMove(after touching moving finger) onTouchEnd(where finger leave touch screen)
  - e.touches[0].clientX it tell on x axis where is your first finger [0] 
-   ```
+```
     const [touchStartX, setTouchStartX] = useState(0);
     const [touchEndX, setTouchEndX] = useState(0);
 
@@ -27,11 +27,11 @@
             leftSlide();
         }
     };
-```
-```
-<div className=" flex items-center gap-[15px]  h-[300px] w-full justify-center " onTouchMove={handleTouchMove} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}></div>
 
+
+<div className=" flex items-center gap-[15px]  h-[300px] w-full justify-center " onTouchMove={handleTouchMove} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}></div>
 ```
+
 
 # File Handling
 ✅ Why async methods use (err) and sync methods don't:
