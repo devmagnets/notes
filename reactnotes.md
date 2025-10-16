@@ -1,4 +1,37 @@
-
+# DB Creation ,Schema and Model
+```
+// env 
+require('dotenv').config({ path: '' })
+const PORT = process.env.PORT
+// db
+const mongoose = require('mongoose')
+const MONGODATABASE_LINK = process.env.MONGODATABASE_LINK
+console.log(MONGODATABASE_LINK)
+const db = async () => {
+    try {
+        await mongoose.connect(MONGODATABASE_LINK)
+        console.log('DB Connected Sucessfully')
+    } catch (err) {
+        console.log('DB Connection Error' + err)
+    }
+}
+db()
+// schema
+const portfolioSchema = new mongoose.Schema({
+    title: {
+        type:'String',
+        unique:'true',
+        required:'true'
+    },
+    description:{
+        type:'String',
+        unique:'true',
+        required:'true'
+    },
+    
+})
+const portfolioModel = mongoose.model('portfolioModel', portfolioSchema)
+```
 # File Handling
 ✅ Why async methods use (err) and sync methods don't:
 Error Handling:
